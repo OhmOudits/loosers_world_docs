@@ -24,7 +24,7 @@ export default function PageContent({ pages, chapters }: PageContentProps) {
   return (
     <div>
       <Breadcrumb chapters={chapters} currentPageId={page.id} />
-      <article className="prose dark:prose-invert max-w-none prose-pre:p-0 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-sm">
+      <article className="prose dark:prose-invert max-w-none prose-pre:p-0 bg-[#121212] p-8 rounded-lg shadow-sm">
         <div className="dark:text-white">
           <ReactMarkdown
             components={{
