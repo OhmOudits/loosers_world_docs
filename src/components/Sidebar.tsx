@@ -1,12 +1,12 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 import type { Section } from "../utils/content";
 
 interface SidebarProps {
+  onClose: () => void;
   sections: Section[];
 }
 
-export default function Sidebar({ sections }: SidebarProps) {
+export default function Sidebar({ onClose, sections }: SidebarProps) {
   const rootPages = sections[0].pages;
   const otherSections = sections.slice(1);
 
@@ -18,6 +18,7 @@ export default function Sidebar({ sections }: SidebarProps) {
             <li key={page.id}>
               <NavLink
                 to={`/${page.id}`}
+                onClick={onClose}
                 className={({ isActive }) =>
                   `flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
                     isActive
@@ -43,6 +44,7 @@ export default function Sidebar({ sections }: SidebarProps) {
                 <li key={page.id}>
                   <NavLink
                     to={`/${page.id}`}
+                    onClick={onClose}
                     className={({ isActive }) =>
                       `flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
                         isActive
