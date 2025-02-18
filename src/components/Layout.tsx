@@ -1,118 +1,100 @@
-import { useState, useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { Menu, Moon, Sun, Search } from "lucide-react";
-import Sidebar from "./Sidebar";
-import { Page, Chapter } from "../types";
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import type { Section } from "../utils/content";
+import { X, Menu } from "lucide-react"; // Using Lucide icons
 
-interface LayoutProps {
-  pages: Page[];
-  chapters: Chapter[];
+interface SidebarProps {
+  sections: Section[];
 }
 
-export default function Layout({ pages, chapters }: LayoutProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Page[]>([]);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDarkMode]);
-
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      const results = pages.filter(
-        (page) =>
-          page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          page.content.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setSearchResults(results);
-    } else {
-      setSearchResults([]);
-    }
-  }, [searchQuery, pages]);
-
-  const handleSearchSelect = (pageId: string) => {
-    setSearchQuery("");
-    setSearchResults([]);
-    navigate(`/${pageId}`);
-  };
+export default function Sidebar({ sections }: SidebarProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const rootPages = sections[0].pages;
+  const otherSections = sections.slice(1);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <header className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 border-b dark:border-gray-800 z-50">
-        <div className="h-full flex items-center justify-between px-4">
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setIsSidebarOpen((p) => !p)}
-              className="rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 lg:hidden"
-            >
-              <Menu className="w-5 h-5 dark:text-gray-200" />
-            </button>
-            <div className="flex items-center mr-2">
-              <img src="logo.png" alt="LW" className="h-8" />
-              <span className="text-lg font-semibold dark:text-white max-md:hidden">
-                Loosers World
-              </span>
-            </div>
-          </div>
+    <>
+      {/* Mobile Toggle Button */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-[#1F1F1F] rounded-lg text-gray-400 hover:text-white"
+        onClick={() => setIsOpen(true)}
+      >
+        <Menu className="w-6 h-6" />
+      </button>
 
-          <div className="hidden md:flex items-center flex-1 max-w-xl mx-8 relative">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search documentation..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {searchResults.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border dark:border-gray-700 max-h-96 overflow-y-auto">
-                  {searchResults.map((result) => (
-                    <button
-                      key={result.id}
-                      onClick={() => handleSearchSelect(result.id)}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100"
+      {/* Sidebar */}
+      <aside
+        className={`fixed top-0 left-0 z-40 w-64 h-screen bg-[#0A0A0A] border-r border-[#1F1F1F] transition-transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 md:relative md:h-auto md:w-64`}
+      >
+        {/* Close Button for Mobile */}
+        <button
+          className="md:hidden absolute top-4 right-4 text-gray-400 hover:text-white"
+          onClick={() => setIsOpen(false)}
+        >
+          <X className="w-6 h-6" />
+        </button>
+
+        <nav className="h-full mt-4 overflow-y-auto p-4">
+          <ul className="space-y-1 mb-6">
+            {rootPages.map((page) => (
+              <li key={page.id}>
+                <NavLink
+                  to={`/${page.id}`}
+                  className={({ isActive }) =>
+                    `flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                      isActive
+                        ? "bg-purple-500/10 text-purple-400"
+                        : "text-gray-400 hover:text-white hover:bg-[#1F1F1F]"
+                    }`
+                  }
+                  onClick={() => setIsOpen(false)}
+                >
+                  <page.icon className="w-4 h-4" />
+                  <span>{page.title}</span>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+
+          {otherSections.map((section) => (
+            <div key={section.id} className="mb-6">
+              <h3 className="mb-2 text-sm font-semibold text-gray-400 uppercase tracking-wider">
+                {section.title}
+              </h3>
+              <ul className="space-y-1">
+                {section.pages.map((page) => (
+                  <li key={page.id}>
+                    <NavLink
+                      to={`/${page.id}`}
+                      className={({ isActive }) =>
+                        `flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                          isActive
+                            ? "bg-purple-500/10 text-purple-400"
+                            : "text-gray-400 hover:text-white hover:bg-[#1F1F1F]"
+                        }`
+                      }
+                      onClick={() => setIsOpen(false)}
                     >
-                      {result.title}
-                    </button>
-                  ))}
-                </div>
-              )}
+                      <page.icon className="w-4 h-4" />
+                      <span>{page.title}</span>
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          ))}
+        </nav>
+      </aside>
 
-          <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            {isDarkMode ? (
-              <Sun className="w-5 h-5 text-gray-200" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
-          </button>
-        </div>
-      </header>
-
-      <Sidebar
-        chapters={chapters}
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        isDarkMode={isDarkMode}
-      />
-
-      <main className="lg:pl-64 pt-16">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <Outlet />
-        </div>
-      </main>
-    </div>
+      {/* Overlay for mobile when sidebar is open */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setIsOpen(false)}
+        ></div>
+      )}
+    </>
   );
 }
