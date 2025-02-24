@@ -11,9 +11,9 @@ export default function Sidebar({ onClose, sections }: SidebarProps) {
   const otherSections = sections.slice(1);
 
   return (
-    <aside className="fixed top-0 left-0 z-40 w-64 h-screen pt-16 bg-[#0A0A0A] border-r border-[#1F1F1F]">
-      <nav className="h-full mt-4 overflow-y-auto p-4">
-        <ul className="space-y-1 mb-6">
+    <aside className="fixed top-0 left-0 z-40 w-64 h-screen pt-16 pb-8 pl-2 max-md:p-0">
+      <nav className="h-full mt-4 overflow-y-auto p-4 bg-[#121212] pt-4 border-r border-[#1F1F1F] rounded-md">
+        <ul className="space-y-2 mb-6">
           {rootPages.map((page) => (
             <li key={page.id}>
               <NavLink
@@ -39,7 +39,7 @@ export default function Sidebar({ onClose, sections }: SidebarProps) {
             <h3 className="mb-2 text-sm font-semibold text-gray-400 uppercase tracking-wider">
               {section.title}
             </h3>
-            <ul className="space-y-1">
+            <ul className="space-y-2">
               {section.pages.map((page) => (
                 <li key={page.id}>
                   <NavLink

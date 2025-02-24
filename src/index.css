@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.bg-header {
+  background: linear-gradient(
+    to right,
+    rgb(10, 5, 16),
+    rgb(15, 13, 13),
+    rgb(18, 18, 18),
+    rgb(15, 13, 13),
+    rgb(10, 5, 16)
+  );
+}
+
+.bg-secondary {
+  background-color: rgb(12, 12, 12);
+}
+
+::--webkit-scrollbar {
+  display: none;
+}
