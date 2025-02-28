@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import ReactMarkdown from "react-markdown";
 import Prism from "prismjs";
 import "prismjs/themes/prism-tomorrow.css";
-// Import specific language components
 import "prismjs/components/prism-bash";
 import "prismjs/components/prism-typescript";
 import { useParams, Navigate, Link } from "react-router-dom";
@@ -13,6 +13,10 @@ interface Page {
   id: string;
   title: string;
   content: string;
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string;
+  author: string;
 }
 
 const sections: Section[] = getContent();
@@ -31,71 +35,68 @@ export default function PageContent() {
   }
 
   const currentIndex = pages.findIndex((p) => p.id === pageId);
-  const prevPage = currentIndex > 0 ? pages[currentIndex - 1] : undefined;
-  const nextPage =
-    currentIndex < pages.length - 1 ? pages[currentIndex + 1] : undefined;
+  const prevPage = pages[currentIndex - 1];
+  const nextPage = pages[currentIndex + 1];
 
   return (
     <div>
+      <Helmet>
+        <html lang="en" />
+        <title>{page.metaTitle}</title>
+        <meta name="description" content={page.metaDescription} />
+        <meta name="keywords" content={page.keywords} />
+        <meta name="author" content={page.author} />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={`https://docs.loosers.world/${page.id}`} />
+
+        {/* Open Graph (Facebook, LinkedIn) */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={page.metaTitle} />
+        <meta property="og:description" content={page.metaDescription} />
+        <meta property="og:url" content={`https://docs.loosers.world/${page.id}`} />
+
+        {/* Twitter Cards */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={page.metaTitle} />
+        <meta name="twitter:description" content={page.metaDescription} />
+      </Helmet>
+
       <Breadcrumb sections={sections} currentPageId={page.id} />
+
       <article className="prose prose-invert max-w-none bg-secondary p-2 rounded-lg">
         <ReactMarkdown
           components={{
             code({ inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || "");
-              const codeString = String(children).replace(/\n$/, "");
+              const codeString = String(children).trim();
 
               if (!inline && match) {
                 const language = match[1];
-                // Check if language is supported before highlighting
                 if (Prism.languages[language]) {
                   try {
-                    const highlightedCode = Prism.highlight(
-                      codeString,
-                      Prism.languages[language],
-                      language
-                    );
                     return (
                       <code
                         className={className}
-                        dangerouslySetInnerHTML={{ __html: highlightedCode }}
+                        dangerouslySetInnerHTML={{
+                          __html: Prism.highlight(codeString, Prism.languages[language], language),
+                        }}
                         {...props}
                       />
                     );
                   } catch (error) {
-                    console.error(
-                      `Error highlighting ${language} code:`,
-                      error
-                    );
+                    console.error(`Error highlighting ${language} code:`, error);
                   }
                 }
-                // Fallback if language isn't loaded
-                return (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                );
               }
 
               return (
-                <code
-                  className={`${
-                    inline
-                      ? "bg-[#2D2D2D] px-2 py-1 rounded text-sm text-purple-400"
-                      : "text-purple-400"
-                  } ${className || ""}`}
-                  {...props}
-                >
+                <code className={`${inline ? "bg-[#2D2D2D] px-2 py-1 rounded text-sm text-purple-400" : "text-purple-400"} ${className || ""}`} {...props}>
                   {children}
                 </code>
               );
             },
             pre({ children }) {
-              return (
-                <pre className="bg-[#0A0A0A] rounded-xl p-6 overflow-x-auto my-6 border border-[#2D2D2D]">
-                  {children}
-                </pre>
-              );
+              return <pre className="bg-[#0A0A0A] rounded-xl p-6 overflow-x-auto my-6 border border-[#2D2D2D]">{children}</pre>;
             },
           }}
         >
@@ -103,27 +104,9 @@ export default function PageContent() {
         </ReactMarkdown>
       </article>
 
-      <div className="mt-8 pt-8 border-t border-[#1F1F1F]">
-        <div className="flex justify-between items-center">
-          {prevPage ? (
-            <NavLink
-              to={`/${prevPage.id}`}
-              direction="prev"
-              title={prevPage.title}
-            />
-          ) : (
-            <div />
-          )}
-          {nextPage ? (
-            <NavLink
-              to={`/${nextPage.id}`}
-              direction="next"
-              title={nextPage.title}
-            />
-          ) : (
-            <div />
-          )}
-        </div>
+      <div className="mt-8 pt-8 border-t border-[#1F1F1F] flex justify-between items-center">
+        {prevPage && <NavLink to={`/${prevPage.id}`} direction="prev" title={prevPage.title} />}
+        {nextPage && <NavLink to={`/${nextPage.id}`} direction="next" title={nextPage.title} />}
       </div>
     </div>
   );
@@ -137,13 +120,8 @@ interface NavLinkProps {
 
 function NavLink({ to, direction, title }: NavLinkProps) {
   return (
-    <Link
-      to={to}
-      className="group flex flex-col space-y-1 text-gray-400 hover:text-purple-400"
-    >
-      <span className="text-sm">
-        {direction === "prev" ? "← Previous" : "Next →"}
-      </span>
+    <Link to={to} className="group flex flex-col space-y-1 text-gray-400 hover:text-purple-400">
+      <span className="text-sm">{direction === "prev" ? "← Previous" : "Next →"}</span>
       <span className="font-medium group-hover:underline">{title}</span>
     </Link>
   );

@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background: #000;
+}
+
 .bg-header {
   background: linear-gradient(
     to right,

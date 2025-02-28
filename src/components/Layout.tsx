@@ -21,9 +21,7 @@ export default function Layout() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setIsSidebarOpen(true);
-      }
+      if (window.innerWidth >= 768) setIsSidebarOpen(true);
     };
 
     window.addEventListener("resize", handleResize);
@@ -50,16 +48,15 @@ export default function Layout() {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    if (query.trim()) {
-      const results = allPages.filter(
-        (page) =>
-          page.title.toLowerCase().includes(query.toLowerCase()) ||
-          page.content.toLowerCase().includes(query.toLowerCase())
-      );
-      setSearchResults(results);
-    } else {
-      setSearchResults([]);
-    }
+    setSearchResults(
+      query.trim()
+        ? allPages.filter(
+            (page) =>
+              page.title.toLowerCase().includes(query.toLowerCase()) ||
+              page.content.toLowerCase().includes(query.toLowerCase())
+          )
+        : []
+    );
   };
 
   const handleSearchSelect = (pageId: string) => {
@@ -69,56 +66,44 @@ export default function Layout() {
     navigate(`/${pageId}`);
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   return (
     <div className="min-h-screen w-full bg-secondary text-[#D1D5DB]">
       <div className="max-w-[1440px] mx-auto grid grid-cols-[auto_1fr] md:grid-cols-[16rem_1fr]">
         {/* Sidebar */}
         <div
           ref={sidebarRef}
-          className={`fixed top-0 h-screen w-64 transition-transform transform ${
+          className={`fixed top-0 h-screen w-64 transition-transform ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } md:translate-x-0 z-40`}
         >
           <div className="h-full">
             <div className="flex justify-end p-4 md:hidden">
               <button
-                onClick={toggleSidebar}
-                className="p-2 rounded-lg hover:bg-[#1F1F1F] text-gray-400 hover:text-white transition-colors"
+                onClick={() => setIsSidebarOpen(false)}
+                className="p-2 rounded-lg hover:bg-[#1F1F1F] text-gray-400 hover:text-white"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <Sidebar
-              onClose={() => setIsSidebarOpen(false)}
-              sections={sections}
-            />
+            <Sidebar onClose={() => setIsSidebarOpen(false)} sections={sections} />
           </div>
         </div>
 
         {/* Main Content Area */}
         <div className="relative">
           {/* Header */}
-          {/* border-b-[0.1px] border-[#1F1F1F] */}
-          <header className="fixed top-0 left-0 right-0 z-50">
-            <div className="max-w-[1440px] bg-secondary border-b-[0.1px] border-[#1F1F1F]  mx-auto h-16 flex items-center px-4 justify-between">
+          <header className="fixed top-0 left-0 right-0 z-50 border-b-[0.1px] border-[#1F1F1F] bg-secondary">
+            <div className="max-w-[1440px] mx-auto h-16 flex items-center px-4 justify-between">
               <div className="flex items-center mr-4" ref={sidebarOpenRef}>
                 <button
-                  onClick={toggleSidebar}
-                  className="p-2 rounded-lg hover:bg-[#1F1F1F] text-gray-400 hover:text-white transition-colors md:hidden"
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="p-2 rounded-lg hover:bg-[#1F1F1F] text-gray-400 hover:text-white md:hidden"
                 >
                   <Menu className="w-6 h-6" />
                 </button>
                 <div className="flex items-center space-x-2">
-                  <div className="w-12 rounded-lg flex items-center justify-center">
-                    <img src="/logo.png" className="w-full h-full" alt="Logo" />
-                  </div>
-                  <span className="text-lg font-semibold text-white">
-                    Loosers World
-                  </span>
+                  <img src="/logo.png" className="w-12 rounded-lg" alt="Logo" />
+                  <span className="text-lg font-semibold text-white">Loosers World</span>
                 </div>
               </div>
               <div className="hidden md:block w-1/3 max-w-[240px] relative">
@@ -134,7 +119,7 @@ export default function Layout() {
               </div>
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 rounded-lg hover:bg-[#1F1F1F] text-gray-400 hover:text-white transition-colors md:hidden"
+                className="p-2 rounded-lg hover:bg-[#1F1F1F] text-gray-400 hover:text-white md:hidden"
               >
                 <Search className="w-5 h-5" />
               </button>
@@ -144,10 +129,7 @@ export default function Layout() {
           {/* Search Modal */}
           {isSearchOpen && (
             <>
-              <div
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-                onClick={() => setIsSearchOpen(false)}
-              />
+              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" onClick={() => setIsSearchOpen(false)} />
               <div className="fixed top-[10%] left-0 right-0 z-50">
                 <div className="max-w-2xl mx-auto p-6">
                   <div className="relative">
@@ -186,6 +168,7 @@ export default function Layout() {
               </div>
             </>
           )}
+
           {/* Main Content */}
           <div className="pt-16 md:pl-64 bg-secondary w-[95vw] max-w-[1440px]">
             <main className="max-w-[1024px] min-h-screen mx-auto px-4 py-8">

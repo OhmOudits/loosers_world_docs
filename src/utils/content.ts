@@ -19,6 +19,10 @@ export interface Page {
   title: string;
   content: string;
   icon: LucideIcon;
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string;
+  author: string;
 }
 
 export interface Section {
@@ -34,12 +38,21 @@ export function getContent(): Section[] {
       title: "Introduction",
       icon: BookIcon,
       content: bookIntroduction,
+      metaTitle: "Introduction - Looser World Documentation",
+      metaDescription: "Learn about the introduction to our platform.",
+      keywords:
+        "loosers world documentation, loosers world docs,loosers world getting started,loosers world",
+      author: "John Doe",
     },
     {
       id: "rocket_quickstart",
       title: "Quick Start",
       icon: RocketIcon,
       content: rocketQuickStart,
+      metaTitle: "Quick Start - Looser World Documentation",
+      metaDescription: "Get started quickly with our guide and setup process.",
+      keywords: "quick start, setup, beginner guide",
+      author: "Jane Smith",
     },
   ];
 
@@ -58,12 +71,21 @@ export function getContent(): Section[] {
           title: "Getting Started",
           icon: WrenchIcon,
           content: gettingStarted,
+          metaTitle: "Getting Started - Looser World Documentation",
+          metaDescription: "Step-by-step guide to getting started.",
+          keywords: "installation, getting started, setup",
+          author: "John Doe",
         },
         {
           id: "tool_configuration",
           title: "Configuration",
           icon: Settings2Icon,
           content: toolConfiguration,
+          metaTitle: "Configuration - Looser World Documentation",
+          metaDescription:
+            "Learn how to configure tools for better performance.",
+          keywords: "configuration, setup, performance",
+          author: "Jane Smith",
         },
       ],
     },
@@ -76,12 +98,20 @@ export function getContent(): Section[] {
           title: "Code Examples",
           icon: CodeIcon,
           content: codeExamples,
+          metaTitle: "Code Examples - Looser World Documentation",
+          metaDescription: "Explore various code examples and implementations.",
+          keywords: "code, programming, examples",
+          author: "John Developer",
         },
         {
           id: "terminal_cli-usage",
           title: "CLI Usage",
           icon: TerminalIcon,
           content: terminalCommands,
+          metaTitle: "CLI Usage - Looser World Documentation",
+          metaDescription: "Understand command-line interface usage in depth.",
+          keywords: "CLI, terminal, commands",
+          author: "Jane Tech",
         },
       ],
     },
